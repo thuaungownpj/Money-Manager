@@ -7,41 +7,26 @@ const topbarActions = document.getElementById('topbar-actions');
 const menuItems = document.querySelectorAll('.menu-item');
 const logoutBtn = document.getElementById('logout-btn');
 
-// အလံ Element များ
 const btnEn = document.getElementById('btn-en');
 const btnMm = document.getElementById('btn-mm');
 
 let allTransactions = []; 
 
-// အလံများကို ရွေးချယ်ထားသော ဘာသာစကားအလိုက် လင်း/မှိန် ပြုလုပ်ခြင်း
 function updateFlagUI() {
     const lang = getLanguage();
     if(lang === 'en') {
-        btnEn.style.opacity = '1';
-        btnEn.style.transform = 'scale(1.1)';
-        btnEn.style.filter = 'grayscale(0%)';
-        
-        btnMm.style.opacity = '0.4';
-        btnMm.style.transform = 'scale(0.9)';
-        btnMm.style.filter = 'grayscale(80%)';
+        btnEn.style.opacity = '1'; btnEn.style.transform = 'scale(1.1)'; btnEn.style.filter = 'grayscale(0%)';
+        btnMm.style.opacity = '0.4'; btnMm.style.transform = 'scale(0.9)'; btnMm.style.filter = 'grayscale(80%)';
     } else {
-        btnMm.style.opacity = '1';
-        btnMm.style.transform = 'scale(1.1)';
-        btnMm.style.filter = 'grayscale(0%)';
-        
-        btnEn.style.opacity = '0.4';
-        btnEn.style.transform = 'scale(0.9)';
-        btnEn.style.filter = 'grayscale(80%)';
+        btnMm.style.opacity = '1'; btnMm.style.transform = 'scale(1.1)'; btnMm.style.filter = 'grayscale(0%)';
+        btnEn.style.opacity = '0.4'; btnEn.style.transform = 'scale(0.9)'; btnEn.style.filter = 'grayscale(80%)';
     }
 }
 
-// ဘာသာစကားပြောင်းပေးမည့် Function
 function switchLanguage(newLang) {
-    if(getLanguage() === newLang) return; // ရွေးထားပြီးသားဆိုရင် ဘာမှမလုပ်ပါ
-    
+    if(getLanguage() === newLang) return; 
     setLanguage(newLang);
     updateFlagUI(); 
-    
     const activeMenu = document.querySelector('.menu-item.active');
     if (activeMenu) {
         const spanTag = activeMenu.querySelector('span:nth-child(2)');
@@ -59,22 +44,18 @@ async function initApp() {
         window.location.href = 'index.html';
         return;
     }
-
     applyTranslations();
     updateFlagUI();
 
-    // အလံတစ်ခုချင်းစီကို Click လုပ်သည့်အခါ
     btnEn.addEventListener('click', () => switchLanguage('en'));
     btnMm.addEventListener('click', () => switchLanguage('mm'));
 
     loadView('dashboard'); 
 }
 
-// --- 3. SPA Router (Fetch HTML files) ---
 async function loadView(viewName) {
     appContent.innerHTML = '<p class="text-center text-muted" style="margin-top: 50px;">Loading...</p>';
     topbarActions.innerHTML = ''; 
-    
     try {
         let response;
         switch (viewName) {
@@ -84,47 +65,39 @@ async function loadView(viewName) {
                 appContent.innerHTML = await response.text();
                 setupDateFilter(initDashboardLogic);
                 break;
-
             case 'income-category':
                 pageTitle.setAttribute('data-i18n', 'menu_income_cat');
                 response = await fetch('views/income-category.html');
                 appContent.innerHTML = await response.text();
                 initIncomeCategoryLogic();
                 break;
-
             case 'expense-category':
                 pageTitle.setAttribute('data-i18n', 'menu_expense_cat');
                 response = await fetch('views/expense-category.html');
                 appContent.innerHTML = await response.text();
                 initExpenseCategoryLogic();
                 break;
-
             case 'total-income':
                 pageTitle.setAttribute('data-i18n', 'menu_total_income');
                 response = await fetch('views/total-income.html');
                 appContent.innerHTML = await response.text();
                 setupDateFilter(initTotalIncomeLogic);
                 break;
-
             case 'total-expense':
                 pageTitle.setAttribute('data-i18n', 'menu_total_expense');
                 response = await fetch('views/total-expense.html');
                 appContent.innerHTML = await response.text();
                 setupDateFilter(initTotalExpenseLogic);
                 break;
-                
             default:
                 throw new Error("View not found");
         }
-        // View အသစ်ရောက်တိုင်း ဘာသာစကား ထပ်မံစစ်ဆေးပေးမည်
         applyTranslations();
     } catch (error) {
-        console.error("Error loading view:", error);
         appContent.innerHTML = '<p class="text-center text-danger" style="margin-top: 50px;">Error loading view.</p>';
     }
 }
 
-// Menu နှိပ်တိုင်း အလုပ်လုပ်ရန်
 menuItems.forEach(item => {
     item.addEventListener('click', (e) => {
         menuItems.forEach(i => i.classList.remove('active'));
@@ -134,7 +107,6 @@ menuItems.forEach(item => {
     });
 });
 
-// --- Date Filter UI Setup (Dropdown System) ---
 function setupDateFilter(callbackFunction) {
     topbarActions.innerHTML = `
         <div class="date-filter-container" style="display: flex; align-items: center; gap: 10px;">
@@ -182,47 +154,32 @@ function setupDateFilter(callbackFunction) {
             customFields.style.display = 'none'; 
         }
 
-        if (preset === 'today') {
-            start = today;
-        } else if (preset === '7days') {
-            start.setDate(today.getDate() - 7);
-        } else if (preset === '1month') {
-            start.setMonth(today.getMonth() - 1);
-        } else if (preset === '3months') {
-            start.setMonth(today.getMonth() - 3);
-        } else if (preset === '1year') {
-            start.setFullYear(today.getFullYear() - 1);
-        }
+        if (preset === 'today') { start = today; } 
+        else if (preset === '7days') { start.setDate(today.getDate() - 7); } 
+        else if (preset === '1month') { start.setMonth(today.getMonth() - 1); } 
+        else if (preset === '3months') { start.setMonth(today.getMonth() - 3); } 
+        else if (preset === '1year') { start.setFullYear(today.getFullYear() - 1); }
 
         filterStart.value = formatDate(start);
         filterEnd.value = formatDate(end);
-        
         callbackFunction(); 
     }
 
     presetSelect.addEventListener('change', applyPreset);
     filterBtn.addEventListener('click', callbackFunction);
-
     applyPreset(); 
 }
 
 async function fetchTransactions() {
-    const { data, error } = await supabase
-        .from('transactions')
-        .select('*')
-        .order('transaction_date', { ascending: false });
-
-    if (!error && data) {
-        allTransactions = data;
-    }
+    const { data, error } = await supabase.from('transactions').select('*').order('transaction_date', { ascending: false });
+    if (!error && data) allTransactions = data;
 }
 
 // ==========================================
-// 4. Dashboard Logic
+// Dashboard Logic
 // ==========================================
 async function initDashboardLogic() {
     await fetchTransactions();
-    
     const filterStart = document.getElementById('filter-start').value;
     const filterEnd = document.getElementById('filter-end').value;
     
@@ -248,8 +205,8 @@ async function initDashboardLogic() {
 
     const list = document.getElementById('transaction-list');
     if(!list) return;
-
     list.innerHTML = '';
+    
     if (filtered.length === 0) {
         list.innerHTML = '<tr><td colspan="5" class="text-center text-muted">No transactions found.</td></tr>';
         return;
@@ -280,7 +237,7 @@ async function initDashboardLogic() {
 }
 
 // ==========================================
-// 5. Total Income Report Logic & Form
+// Total Income Report Logic
 // ==========================================
 async function initTotalIncomeLogic() {
     const categorySelect = document.getElementById('inc-category');
@@ -289,10 +246,11 @@ async function initTotalIncomeLogic() {
     
     dateInput.value = new Date().toISOString().split('T')[0];
     
-    let incomeCats = JSON.parse(localStorage.getItem('app_income_categories')) || [];
-    categorySelect.innerHTML = incomeCats.length > 0 
+    // Cloud ပေါ်မှ Category များကို လှမ်းယူခြင်း
+    const { data: incomeCats } = await supabase.from('categories').select('*').eq('type', 'income');
+    categorySelect.innerHTML = incomeCats && incomeCats.length > 0 
         ? incomeCats.map(c => `<option value="${c.icon} ${c.name}">${c.icon} ${c.name}</option>`).join('')
-        : '<option value="Other">No category found</option>';
+        : '<option value="Other">No category found (Add from Settings)</option>';
 
     const newForm = addForm.cloneNode(true);
     addForm.parentNode.replaceChild(newForm, addForm);
@@ -301,7 +259,6 @@ async function initTotalIncomeLogic() {
         e.preventDefault();
         const submitBtn = newForm.querySelector('button[type="submit"]');
         submitBtn.disabled = true;
-        submitBtn.textContent = 'Saving...';
 
         const record = {
             transaction_date: document.getElementById('inc-date').value,
@@ -309,18 +266,11 @@ async function initTotalIncomeLogic() {
             type: 'income',
             amount: document.getElementById('inc-amount').value
         };
-
         const { error } = await supabase.from('transactions').insert([record]);
         
         submitBtn.disabled = false;
-        submitBtn.textContent = 'Save Income';
-
-        if (error) {
-            alert("Error saving data: " + error.message);
-        } else {
-            document.getElementById('inc-amount').value = ''; 
-            initTotalIncomeLogic(); 
-        }
+        if (error) alert("Error saving data: " + error.message);
+        else { document.getElementById('inc-amount').value = ''; initTotalIncomeLogic(); }
     });
 
     await fetchTransactions(); 
@@ -339,7 +289,7 @@ async function initTotalIncomeLogic() {
     list.innerHTML = '';
     
     if(incomes.length === 0) {
-        list.innerHTML = '<tr><td colspan="3" class="text-center text-muted">No income found for this period.</td></tr>';
+        list.innerHTML = '<tr><td colspan="3" class="text-center text-muted">No income found.</td></tr>';
         return;
     }
 
@@ -355,7 +305,7 @@ async function initTotalIncomeLogic() {
 }
 
 // ==========================================
-// 6. Total Expense Report Logic & Form
+// Total Expense Report Logic
 // ==========================================
 async function initTotalExpenseLogic() {
     const categorySelect = document.getElementById('exp-category');
@@ -364,10 +314,11 @@ async function initTotalExpenseLogic() {
     
     dateInput.value = new Date().toISOString().split('T')[0];
     
-    let expenseCats = JSON.parse(localStorage.getItem('app_expense_categories')) || [];
-    categorySelect.innerHTML = expenseCats.length > 0 
+    // Cloud ပေါ်မှ Category များကို လှမ်းယူခြင်း
+    const { data: expenseCats } = await supabase.from('categories').select('*').eq('type', 'expense');
+    categorySelect.innerHTML = expenseCats && expenseCats.length > 0 
         ? expenseCats.map(c => `<option value="${c.icon} ${c.name}">${c.icon} ${c.name}</option>`).join('')
-        : '<option value="Other">No category found</option>';
+        : '<option value="Other">No category found (Add from Settings)</option>';
 
     const newForm = addForm.cloneNode(true);
     addForm.parentNode.replaceChild(newForm, addForm);
@@ -376,7 +327,6 @@ async function initTotalExpenseLogic() {
         e.preventDefault();
         const submitBtn = newForm.querySelector('button[type="submit"]');
         submitBtn.disabled = true;
-        submitBtn.textContent = 'Saving...';
 
         const record = {
             transaction_date: document.getElementById('exp-date').value,
@@ -384,18 +334,11 @@ async function initTotalExpenseLogic() {
             type: 'expense',
             amount: document.getElementById('exp-amount').value
         };
-
         const { error } = await supabase.from('transactions').insert([record]);
         
         submitBtn.disabled = false;
-        submitBtn.textContent = 'Save Expense';
-
-        if (error) {
-            alert("Error saving data: " + error.message);
-        } else {
-            document.getElementById('exp-amount').value = ''; 
-            initTotalExpenseLogic(); 
-        }
+        if (error) alert("Error saving data: " + error.message);
+        else { document.getElementById('exp-amount').value = ''; initTotalExpenseLogic(); }
     });
 
     await fetchTransactions(); 
@@ -412,12 +355,10 @@ async function initTotalExpenseLogic() {
 
     const list = document.getElementById('expense-report-list');
     list.innerHTML = '';
-    
     if(expenses.length === 0) {
-        list.innerHTML = '<tr><td colspan="3" class="text-center text-muted">No expenses found for this period.</td></tr>';
+        list.innerHTML = '<tr><td colspan="3" class="text-center text-muted">No expenses found.</td></tr>';
         return;
     }
-
     expenses.forEach(t => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
@@ -430,79 +371,77 @@ async function initTotalExpenseLogic() {
 }
 
 // ==========================================
-// 7. Income & Expense Categories Logic
+// Cloud Category Logic (Income & Expense)
 // ==========================================
 function initIncomeCategoryLogic() {
     const form = document.getElementById('income-category-form');
     renderIncomeCategoriesList(); 
-    
     const newForm = form.cloneNode(true);
     form.parentNode.replaceChild(newForm, form);
 
-    newForm.addEventListener('submit', (e) => {
+    newForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        let cats = JSON.parse(localStorage.getItem('app_income_categories')) || [];
-        cats.push({ id: Date.now(), icon: document.getElementById('inc-cat-icon').value, name: document.getElementById('inc-cat-name').value.trim() });
-        localStorage.setItem('app_income_categories', JSON.stringify(cats));
+        const record = {
+            type: 'income',
+            icon: document.getElementById('inc-cat-icon').value,
+            name: document.getElementById('inc-cat-name').value.trim()
+        };
+        await supabase.from('categories').insert([record]);
         document.getElementById('inc-cat-name').value = ''; 
         renderIncomeCategoriesList(); 
     });
 }
 
-function renderIncomeCategoriesList() {
+async function renderIncomeCategoriesList() {
     const list = document.getElementById('income-category-list');
     if(!list) return;
-    let cats = JSON.parse(localStorage.getItem('app_income_categories')) || [];
-    list.innerHTML = cats.length ? cats.map(c => `<div class="category-item"><div class="cat-info"><div class="cat-icon-display">${c.icon}</div><div class="cat-name-display">${c.name}</div></div><button class="btn-delete-cat" onclick="deleteIncCat(${c.id})">🗑️</button></div>`).join('') : '<p class="text-muted">No data.</p>';
-}
-
-window.deleteIncCat = function(id) {
-    if(confirm('Are you sure you want to delete this category?')){ 
-        let cats = JSON.parse(localStorage.getItem('app_income_categories')); 
-        localStorage.setItem('app_income_categories', JSON.stringify(cats.filter(c=>c.id!==id))); 
-        renderIncomeCategoriesList();
-    }
+    list.innerHTML = '<p class="text-muted">Loading...</p>';
+    const { data: cats } = await supabase.from('categories').select('*').eq('type', 'income');
+    list.innerHTML = cats && cats.length ? cats.map(c => `<div class="category-item"><div class="cat-info"><div class="cat-icon-display">${c.icon}</div><div class="cat-name-display">${c.name}</div></div><button class="btn-delete-cat" onclick="deleteCategory(${c.id}, 'income')">🗑️</button></div>`).join('') : '<p class="text-muted">No data.</p>';
 }
 
 function initExpenseCategoryLogic() {
     const form = document.getElementById('expense-category-form');
     renderExpenseCategoriesList(); 
-    
     const newForm = form.cloneNode(true);
     form.parentNode.replaceChild(newForm, form);
 
-    newForm.addEventListener('submit', (e) => {
+    newForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        let cats = JSON.parse(localStorage.getItem('app_expense_categories')) || [];
-        cats.push({ id: Date.now(), icon: document.getElementById('exp-cat-icon').value, name: document.getElementById('exp-cat-name').value.trim() });
-        localStorage.setItem('app_expense_categories', JSON.stringify(cats));
+        const record = {
+            type: 'expense',
+            icon: document.getElementById('exp-cat-icon').value,
+            name: document.getElementById('exp-cat-name').value.trim()
+        };
+        await supabase.from('categories').insert([record]);
         document.getElementById('exp-cat-name').value = ''; 
         renderExpenseCategoriesList(); 
     });
 }
 
-function renderExpenseCategoriesList() {
+async function renderExpenseCategoriesList() {
     const list = document.getElementById('expense-category-list');
     if(!list) return;
-    let cats = JSON.parse(localStorage.getItem('app_expense_categories')) || [];
-    list.innerHTML = cats.length ? cats.map(c => `<div class="category-item"><div class="cat-info"><div class="cat-icon-display" style="color:var(--danger); background:rgba(239,68,68,0.1)">${c.icon}</div><div class="cat-name-display">${c.name}</div></div><button class="btn-delete-cat" onclick="deleteExpCat(${c.id})">🗑️</button></div>`).join('') : '<p class="text-muted">No data.</p>';
+    list.innerHTML = '<p class="text-muted">Loading...</p>';
+    const { data: cats } = await supabase.from('categories').select('*').eq('type', 'expense');
+    list.innerHTML = cats && cats.length ? cats.map(c => `<div class="category-item"><div class="cat-info"><div class="cat-icon-display" style="color:var(--danger); background:rgba(239,68,68,0.1)">${c.icon}</div><div class="cat-name-display">${c.name}</div></div><button class="btn-delete-cat" onclick="deleteCategory(${c.id}, 'expense')">🗑️</button></div>`).join('') : '<p class="text-muted">No data.</p>';
 }
 
-window.deleteExpCat = function(id) {
+// Global Category Delete
+window.deleteCategory = async function(id, type) {
     if(confirm('Are you sure you want to delete this category?')){ 
-        let cats = JSON.parse(localStorage.getItem('app_expense_categories')); 
-        localStorage.setItem('app_expense_categories', JSON.stringify(cats.filter(c=>c.id!==id))); 
-        renderExpenseCategoriesList();
+        await supabase.from('categories').delete().eq('id', id);
+        if (type === 'income') renderIncomeCategoriesList();
+        else renderExpenseCategoriesList();
     }
 }
 
 // ==========================================
-// 8. Logout Function
+// Logout
 // ==========================================
 logoutBtn.addEventListener('click', async () => {
     await supabase.auth.signOut();
     window.location.href = 'index.html';
 });
 
-// Start Application
 initApp();
