@@ -1,0 +1,42 @@
+<!-- ထွက်ငွေအသစ် ထည့်ရန် Form -->
+<section class="widget-card" style="margin-bottom: 20px;">
+    <div class="section-header">
+        <h3>➖ Create New Expense Category</h3>
+    </div>
+    <form id="expense-category-form">
+        <div class="form-row" style="grid-template-columns: 120px 1fr auto;">
+            <div class="input-group">
+                <label>Icon</label>
+                <select id="exp-cat-icon" required style="font-size: 16px; cursor: pointer;">
+                    <option value="💼" data-i18n="cat_exp_work">💼 Work</option>
+                    <option value="👨‍👩‍👧‍👦" data-i18n="cat_exp_family">👨‍👩‍👧‍👦 Family</option>
+                    <option value="🏥" data-i18n="cat_exp_health">🏥 Health</option>
+                    <option value="🏡" data-i18n="cat_exp_home">🏡 Home</option>
+                    <option value="🛍️" data-i18n="cat_exp_shop">🛍️ Shopping</option>
+                    <option value="📄" data-i18n="cat_exp_rent">📄 Rent & Bills</option>
+                    <option value="🍔" data-i18n="cat_exp_food">🍔 Food</option>
+                    <option value="🎓" data-i18n="cat_exp_edu">🎓 Education</option>
+                    <option value="🚗" data-i18n="cat_exp_trans">🚗 Transportation</option>
+                    <option value="✈️" data-i18n="cat_exp_travel">✈️ Travel</option>
+                    <option value="🧩" data-i18n="cat_exp_other">🧩 Others</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>Category Name</label>
+                <input type="text" id="exp-cat-name" required placeholder="e.g. Lunch">
+            </div>
+            <div class="input-group" style="display: flex; align-items: flex-end;">
+                <button type="submit" class="btn-primary" style="background-color: var(--danger); padding: 14px 20px;">Add</button>
+            </div>
+        </div>
+    </form>
+</section>
+
+<section class="widget-card">
+    <div class="section-header">
+        <h3>Your Expense Categories</h3>
+    </div>
+    <div class="category-list" id="expense-category-list">
+        <!-- Data များ ဒီနေရာတွင် ပေါ်လာမည် -->
+    </div>
+</section>

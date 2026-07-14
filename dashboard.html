@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Money Manager</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="dashboard-body">
+    <div class="app-layout">
+        
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-brand"><h2 data-i18n="app_name">Money Manager</h2></div>
+            <ul class="sidebar-menu">
+                <li class="menu-item active" data-view="dashboard">
+                    <span class="icon">📊</span> <span data-i18n="menu_dashboard">Dashboard</span>
+                </li>
+                
+                <li class="menu-category" data-i18n="menu_reports">Reports</li>
+                <li class="menu-item" data-view="total-income">
+                    <span class="icon">📈</span> <span data-i18n="menu_total_income">Total Income</span>
+                </li>
+                <li class="menu-item" data-view="total-expense">
+                    <span class="icon">📉</span> <span data-i18n="menu_total_expense">Total Expense</span>
+                </li>
+                
+                <li class="menu-category" data-i18n="menu_settings">Settings</li>
+                <li class="menu-item" data-view="income-category">
+                    <span class="icon">📁</span> <span data-i18n="menu_income_cat">Income Category</span>
+                </li>
+                <li class="menu-item" data-view="expense-category">
+                    <span class="icon">💸</span> <span data-i18n="menu_expense_cat">Expense Category</span>
+                </li>
+            </ul>
+            <div class="sidebar-footer">
+                <button id="logout-btn" class="btn-logout">
+                    <span class="icon">🚪</span> <span data-i18n="logout">Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button id="mobile-menu-btn" class="mobile-btn">☰</button>
+                    <h2 id="page-title" data-i18n="menu_dashboard">Dashboard</h2>
+                </div>
+                
+                <!-- ညာဘက်ထောင့် (Filter များနှင့် ရိုးရှင်းသော အလံ ခလုတ်များ) -->
+                <div style="display: flex; gap: 20px; align-items: center;">
+                    <div id="topbar-actions"></div>
+                    
+                    <!-- ရိုးရှင်းသော အလံပုံစံ Language Switcher -->
+                    <div style="display: flex; gap: 12px; align-items: center; user-select: none;">
+                        <span id="btn-en" style="cursor: pointer; font-size: 26px; transition: 0.2s;" title="English">🇺🇸</span>
+                        <span id="btn-mm" style="cursor: pointer; font-size: 26px; transition: 0.2s;" title="မြန်မာ">🇲🇲</span>
+                    </div>
+                </div>
+            </header>
+
+            <div class="content-area view-section active" id="app-content">
+                <!-- Data များ လာဝင်မည် -->
+            </div>
+        </main>
+    </div>
+    <script type="module" src="js/dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!-- ဝင်ငွေအသစ် ထည့်ရန် Form -->
+<section class="widget-card" style="margin-bottom: 20px;">
+    <div class="section-header">
+        <h3>➕ Add New Income (ဝင်ငွေအသစ် ထည့်ရန်)</h3>
+    </div>
+    <form id="add-income-form">
+        <div class="form-row" style="grid-template-columns: 1fr 1fr 1fr auto;">
+            <div class="input-group">
+                <label>Date (ရက်စွဲ)</label>
+                <input type="date" id="inc-date" required>
+            </div>
+            <div class="input-group">
+                <label>Category (အမျိုးအစား)</label>
+                <select id="inc-category" required>
+                    <!-- JS မှ Category များ လာထည့်ပေးမည် -->
+                </select>
+            </div>
+            <div class="input-group">
+                <label>Amount (ပမာဏ - Ks)</label>
+                <input type="number" id="inc-amount" required placeholder="e.g. 50000" min="0">
+            </div>
+            <div class="input-group" style="display: flex; align-items: flex-end;">
+                <button type="submit" class="btn-primary" style="padding: 14px 20px; width: 100%;">Save Income</button>
+            </div>
+        </div>
+    </form>
+</section>
+
+<!-- Total Summary Card -->
+<section class="summary-grid">
+    <div class="summary-card income-card" style="grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: center;">
+        <div>
+            <h3>Total Income (ရွေးချယ်ထားသော အချိန်အတွင်း)</h3>
+            <p id="report-total-income" class="amount" style="font-size: 32px; margin-top: 10px;">0 Ks</p>
+        </div>
+        <div style="font-size: 40px; opacity: 0.5;">💰</div>
+    </div>
+</section>
+
+<!-- Income Details Table -->
+<section class="widget-card">
+    <div class="section-header">
+        <h3>Income Details (ဝင်ငွေ အသေးစိတ်)</h3>
+    </div>
+    <div class="table-responsive">
+        <table class="transaction-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Category</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+            <tbody id="income-report-list">
+                <tr><td colspan="3" class="text-center text-muted">Loading...</td></tr>
+            </tbody>
+        </table>
+    </div>
+</section>
