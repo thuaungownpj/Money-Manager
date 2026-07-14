@@ -334,3 +334,202 @@ select {
         grid-template-columns: 1fr;
     }
 }
+
+/* --- Modern Auth Split Layout CSS --- */
+.auth-page-wrapper {
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+    background-color: var(--bg-dark);
+}
+
+/* Left Banner Styling */
+.auth-banner {
+    flex: 1.2;
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    border-right: 1px solid var(--border);
+}
+
+.circle-bg {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    z-index: 0;
+}
+.circle-1 { width: 400px; height: 400px; background: rgba(59, 130, 246, 0.15); top: -100px; left: -100px; }
+.circle-2 { width: 300px; height: 300px; background: rgba(139, 92, 246, 0.15); bottom: -50px; right: -50px; }
+
+.banner-content {
+    position: relative;
+    z-index: 1;
+    max-width: 500px;
+}
+
+.brand-logo {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 40px;
+}
+.brand-logo h2 {
+    font-size: 24px;
+    color: var(--text-main);
+    letter-spacing: 1px;
+}
+
+.welcome-title {
+    font-size: 42px;
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 20px;
+    background: linear-gradient(to right, #60a5fa, #a78bfa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.welcome-subtitle {
+    font-size: 16px;
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin-bottom: 50px;
+}
+
+/* Glassmorphism Floating Cards */
+.floating-card {
+    background: rgba(30, 41, 59, 0.6);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 15px 20px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    width: 250px;
+    margin-bottom: 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    animation: float 6s ease-in-out infinite;
+}
+.decor-2 {
+    margin-left: 50px;
+    animation-delay: 2s;
+}
+.icon-box {
+    width: 45px;
+    height: 45px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+}
+.decor-title { font-size: 12px; color: var(--text-muted); margin-bottom: 4px; }
+.decor-amount { font-size: 16px; font-weight: 700; color: var(--text-main); }
+
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
+}
+
+/* Right Form Area Styling */
+.auth-form-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    background-color: var(--bg-dark);
+}
+
+.auth-top-bar {
+    position: absolute;
+    top: 30px;
+    right: 40px;
+}
+
+.lang-flags {
+    display: flex;
+    gap: 15px;
+    background: var(--bg-card);
+    padding: 8px 15px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+}
+.flag-icon {
+    font-size: 24px;
+    cursor: pointer;
+    transition: 0.2s;
+    user-select: none;
+}
+
+.auth-card-modern {
+    width: 100%;
+    max-width: 420px;
+    margin: auto;
+    padding: 40px;
+}
+
+.form-title { font-size: 28px; margin-bottom: 8px; color: var(--text-main); }
+.form-subtitle { color: var(--text-muted); font-size: 15px; margin-bottom: 30px; }
+
+/* Buttons & Inputs */
+.btn-google {
+    width: 100%;
+    padding: 14px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text-main);
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: 0.3s;
+}
+.btn-google:hover { background: rgba(255,255,255,0.05); }
+
+.divider {
+    display: flex;
+    align-items: center;
+    margin: 25px 0;
+}
+.divider::before, .divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+}
+.divider span {
+    padding: 0 15px;
+    color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.password-wrapper { position: relative; }
+.eye-icon {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    opacity: 0.5;
+    transition: 0.2s;
+}
+.eye-icon:hover { opacity: 1; }
+
+/* Mobile Responsive */
+@media (max-width: 992px) {
+    .auth-page-wrapper { flex-direction: column; }
+    .auth-banner { display: none; /* မိုဘိုင်းတွင် ဘယ်ဘက်ခြမ်းကို ဖျောက်ထားမည် */ }
+    .auth-form-area { justify-content: center; min-height: 100vh; }
+    .auth-top-bar { top: 20px; right: 20px; }
+}

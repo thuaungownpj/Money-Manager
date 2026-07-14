@@ -1,26 +1,62 @@
+<!-- Summary Cards Section -->
 <section class="summary-grid">
     <div class="summary-card income-card">
-        <h3>Total Income (ဝင်ငွေ)</h3><p id="card-income" class="amount">0 Ks</p>
+        <h3>Total Income (ဝင်ငွေ)</h3>
+        <p id="card-income" class="amount">0 Ks</p>
     </div>
     <div class="summary-card expense-card">
-        <h3>Total Expense (ထွက်ငွေ)</h3><p id="card-expense" class="amount">0 Ks</p>
+        <h3>Total Expense (ထွက်ငွေ)</h3>
+        <p id="card-expense" class="amount">0 Ks</p>
     </div>
     <div class="summary-card profit-card">
-        <h3>Net Profit (အမြတ်ငွေ)</h3><p id="card-profit" class="amount">0 Ks</p>
+        <h3>Net Profit (အမြတ်ငွေ)</h3>
+        <p id="card-profit" class="amount">0 Ks</p>
     </div>
     <div class="summary-card loss-card">
-        <h3>Net Loss (အရှုံးငွေ)</h3><p id="card-loss" class="amount">0 Ks</p>
+        <h3>Net Loss (အရှုံးငွေ)</h3>
+        <p id="card-loss" class="amount">0 Ks</p>
     </div>
 </section>
+
+<!-- 📊 Charts Section (Grid အပြင်ဘက်သို့ သီးသန့်ထုတ်ထားသည်) -->
+<section style="display: flex; gap: 20px; margin-bottom: 30px; flex-wrap: wrap;">
+    <!-- Income vs Expense Bar Chart -->
+    <div class="widget-card" style="flex: 2; min-width: 300px;">
+        <h3 style="margin-bottom: 15px; color: var(--text-muted); font-size: 15px;">Income vs Expense Trend</h3>
+        <div style="position: relative; height: 250px; width: 100%;">
+            <canvas id="trendChart"></canvas>
+        </div>
+    </div>
+    
+    <!-- Expense by Category Doughnut Chart -->
+    <div class="widget-card" style="flex: 1; min-width: 250px;">
+        <h3 style="margin-bottom: 15px; color: var(--text-muted); font-size: 15px;">Expense by Category</h3>
+        <div style="position: relative; height: 250px; width: 100%;">
+            <canvas id="categoryChart"></canvas>
+        </div>
+    </div>
+</section>
+
+<!-- Transaction History -->
 <section class="widget-card">
-    <div class="section-header"><h3>Transaction History</h3></div>
+    <div class="section-header">
+        <h3>Transaction History</h3>
+    </div>
     <div class="table-responsive">
         <table class="transaction-table">
             <thead>
-                <tr><th>Date</th><th>Category</th><th>Type</th><th>Amount</th><th>Action</th></tr>
+                <tr>
+                    <th>Date</th>
+                    <th>Category</th>
+                    <th>Type</th>
+                    <th>Amount</th>
+                    <th>Action</th>
+                </tr>
             </thead>
             <tbody id="transaction-list">
-                <tr><td colspan="5" class="text-center text-muted">Loading transactions...</td></tr>
+                <tr>
+                    <td colspan="5" class="text-center text-muted">Loading transactions...</td>
+                </tr>
             </tbody>
         </table>
     </div>

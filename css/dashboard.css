@@ -269,7 +269,7 @@
 .text-center { text-align: center; }
 .text-muted { color: var(--text-muted); }
 
-/* --- Category List UI (အသစ်ထပ်ထည့်ထားသည်) --- */
+/* --- Category List UI --- */
 .category-list {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -321,6 +321,46 @@
     background-color: rgba(239, 68, 68, 0.1);
 }
 
+/* --- Topbar Right & Language Switcher --- */
+.topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.lang-switch-container {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    user-select: none;
+}
+
+.lang-btn {
+    cursor: pointer;
+    font-size: 26px;
+    transition: 0.2s;
+}
+
+/* --- Sidebar Overlay for Mobile --- */
+.sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(2px);
+    z-index: 999;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.sidebar-overlay.show {
+    display: block;
+    opacity: 1;
+}
+
 /* --- Responsive Design --- */
 @media (max-width: 992px) {
     .topbar {
@@ -332,10 +372,12 @@
     }
     .topbar-right {
         width: 100%;
+        justify-content: space-between;
     }
     .date-filter-container {
         width: 100%;
         justify-content: space-between;
+        flex-wrap: wrap;
     }
 }
 
@@ -355,5 +397,11 @@
     }
     .form-row {
         grid-template-columns: 1fr !important;
+    }
+    #custom-date-fields {
+        flex-wrap: wrap;
+        width: 100%;
+        justify-content: space-between;
+        margin-top: 10px;
     }
 }

@@ -10,7 +10,29 @@ const logoutBtn = document.getElementById('logout-btn');
 const btnEn = document.getElementById('btn-en');
 const btnMm = document.getElementById('btn-mm');
 
+// --- Mobile Sidebar Elements ---
+const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+const sidebar = document.getElementById('sidebar');
+const sidebarOverlay = document.getElementById('sidebar-overlay');
+
+let trendChartInstance = null;
+let categoryChartInstance = null;
 let allTransactions = []; 
+
+// ==========================================
+// Mobile Sidebar ဖွင့်/ပိတ် Logic
+// ==========================================
+if (mobileMenuBtn && sidebar && sidebarOverlay) {
+    mobileMenuBtn.addEventListener('click', () => {
+        sidebar.classList.add('show');
+        sidebarOverlay.classList.add('show');
+    });
+
+    sidebarOverlay.addEventListener('click', () => {
+        sidebar.classList.remove('show');
+        sidebarOverlay.classList.remove('show');
+    });
+}
 
 function updateFlagUI() {
     const lang = getLanguage();
@@ -92,7 +114,7 @@ async function loadView(viewName) {
             default:
                 throw new Error("View not found");
         }
-        applyTranslations();
+        applyTranslations(); // View အသစ်ဝင်လာတိုင်း ဘာသာစကားချက်ချင်းပြောင်းရန်
     } catch (error) {
         appContent.innerHTML = '<p class="text-center text-danger" style="margin-top: 50px;">Error loading view.</p>';
     }
@@ -102,6 +124,13 @@ menuItems.forEach(item => {
     item.addEventListener('click', (e) => {
         menuItems.forEach(i => i.classList.remove('active'));
         e.currentTarget.classList.add('active');
+        
+        // ဖုန်းစခရင်တွင် Menu နှိပ်ပြီးပါက Sidebar ကို အလိုအလျောက်ပိတ်ပေးရန်
+        if (window.innerWidth <= 768 && sidebar && sidebarOverlay) {
+            sidebar.classList.remove('show');
+            sidebarOverlay.classList.remove('show');
+        }
+
         const view = e.currentTarget.getAttribute('data-view');
         loadView(view);
     });
@@ -234,6 +263,76 @@ async function initDashboardLogic() {
             }
         });
     });
+
+    // ==========================================
+    // 📊 Chart.js Logic 
+    // ==========================================
+    const trendCtx = document.getElementById('trendChart');
+    const catCtx = document.getElementById('categoryChart');
+    
+    if(trendCtx && catCtx) {
+        if (trendChartInstance) trendChartInstance.destroy();
+        if (categoryChartInstance) categoryChartInstance.destroy();
+
+        let incomeTotal = 0, expenseTotal = 0;
+        let expenseByCategory = {};
+
+        filtered.forEach(t => {
+            if (t.type === 'income') incomeTotal += Number(t.amount);
+            if (t.type === 'expense') {
+                expenseTotal += Number(t.amount);
+                expenseByCategory[t.category] = (expenseByCategory[t.category] || 0) + Number(t.amount);
+            }
+        });
+
+        trendChartInstance = new Chart(trendCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Total Income', 'Total Expense'],
+                datasets: [{
+                    label: 'Amount (Ks)',
+                    data: [incomeTotal, expenseTotal],
+                    backgroundColor: ['rgba(16, 185, 129, 0.8)', 'rgba(239, 68, 68, 0.8)'],
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: { 
+                    y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' } },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+
+        const catLabels = Object.keys(expenseByCategory);
+        const catData = Object.values(expenseByCategory);
+        
+        categoryChartInstance = new Chart(catCtx, {
+            type: 'doughnut',
+            data: {
+                labels: catLabels.length ? catLabels : ['No Expenses'],
+                datasets: [{
+                    data: catData.length ? catData : [1],
+                    backgroundColor: catData.length ? [
+                        '#ef4444', '#f59e0b', '#3b82f6', '#10b981', '#8b5cf6', '#ec4899', '#14b8a6'
+                    ] : ['#374151'],
+                    borderWidth: 0,
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'right', labels: { color: '#9ca3af', font: { size: 11 } } }
+                },
+                cutout: '70%'
+            }
+        });
+    }
 }
 
 // ==========================================
@@ -246,7 +345,6 @@ async function initTotalIncomeLogic() {
     
     dateInput.value = new Date().toISOString().split('T')[0];
     
-    // Cloud ပေါ်မှ Category များကို လှမ်းယူခြင်း
     const { data: incomeCats } = await supabase.from('categories').select('*').eq('type', 'income');
     categorySelect.innerHTML = incomeCats && incomeCats.length > 0 
         ? incomeCats.map(c => `<option value="${c.icon} ${c.name}">${c.icon} ${c.name}</option>`).join('')
@@ -314,7 +412,6 @@ async function initTotalExpenseLogic() {
     
     dateInput.value = new Date().toISOString().split('T')[0];
     
-    // Cloud ပေါ်မှ Category များကို လှမ်းယူခြင်း
     const { data: expenseCats } = await supabase.from('categories').select('*').eq('type', 'expense');
     categorySelect.innerHTML = expenseCats && expenseCats.length > 0 
         ? expenseCats.map(c => `<option value="${c.icon} ${c.name}">${c.icon} ${c.name}</option>`).join('')

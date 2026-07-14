@@ -3,43 +3,301 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Money Manager - Login</title>
-    <link rel="stylesheet" href="css/style.css">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Money Manager - Master Your Finances</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* ==========================================
+           ULTRA-PREMIUM FINTECH LANDING PAGE
+           ========================================== */
+        :root {
+            --bg-site: #09090b; /* Zinc 950 */
+            --surface: #18181b;
+            --border: rgba(255, 255, 255, 0.08);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --primary: #3b82f6; /* Blue 500 */
+            --primary-hover: #2563eb;
+            --accent: #10b981; /* Emerald 500 */
+            --danger: #ef4444; /* Red 500 */
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        html { scroll-behavior: smooth; } /* Menu မှ နှိပ်လျှင် ချောမွေ့စွာ ဆင်းရန် */
+        body { background-color: var(--bg-site); color: var(--text-main); min-height: 100vh; overflow-x: hidden; position: relative; }
+
+        /* Modern Grid & Ambient Glow Background */
+        .bg-layer {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -2;
+            background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
+            background-size: 60px 60px;
+            background-position: center top;
+            mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 80%);
+            -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 80%);
+        }
+        .glow-circle { position: absolute; border-radius: 50%; filter: blur(100px); z-index: -1; opacity: 0.4; pointer-events: none;}
+        .glow-1 { top: -10%; left: 10%; width: 500px; height: 500px; background: #3b82f6; }
+        .glow-2 { top: 30%; right: -5%; width: 400px; height: 400px; background: #8b5cf6; }
+        .glow-3 { top: 120%; left: 40%; width: 600px; height: 600px; background: rgba(16, 185, 129, 0.3); }
+
+        /* --- Navbar --- */
+        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 20px 5%; background: rgba(9, 9, 11, 0.7); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 50; }
+        .nav-brand { display: flex; align-items: center; gap: 10px; font-size: 22px; font-weight: 700; letter-spacing: -0.5px; }
+        .nav-links { display: flex; gap: 35px; }
+        .nav-links a { color: var(--text-muted); text-decoration: none; font-size: 15px; font-weight: 500; cursor: pointer; transition: 0.3s; }
+        .nav-links a:hover { color: var(--text-main); }
+        .nav-actions { display: flex; align-items: center; gap: 15px; }
+        
+        .lang-switch { display: flex; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 20px; overflow: hidden;}
+        .lang-switch button { background: none; border: none; color: var(--text-muted); padding: 8px 14px; font-size: 12px; font-weight: 700; cursor: pointer; transition: 0.3s; }
+        .lang-switch button.active { background: var(--border); color: #fff; }
+
+        .btn-nav-login { background: #fff; color: #000; border: none; padding: 10px 20px; border-radius: 30px; font-size: 14px; font-weight: 600; cursor: pointer; transition: 0.3s; }
+        .btn-nav-login:hover { background: #e2e8f0; transform: translateY(-1px); }
+
+        /* --- Hero Section --- */
+        .hero-container { display: flex; align-items: center; justify-content: space-between; max-width: 1300px; margin: 0 auto; padding: 80px 5%; gap: 50px; min-height: calc(100vh - 85px); }
+
+        .hero-text { flex: 1; max-width: 600px; }
+        .hero-badge { display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 30px; font-size: 14px; font-weight: 600; color: #e2e8f0; margin-bottom: 25px; }
+        .hero-title { font-size: 64px; font-weight: 800; line-height: 1.1; margin-bottom: 25px; letter-spacing: -1.5px; }
+        .hero-title .highlight { background: linear-gradient(135deg, #60a5fa, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .hero-desc { font-size: 18px; color: var(--text-muted); line-height: 1.7; margin-bottom: 40px; }
+        
+        .hero-btns { display: flex; gap: 15px; margin-bottom: 40px; }
+        .btn-get-started { background: linear-gradient(135deg, var(--primary), #6366f1); border: none; color: #fff; padding: 16px 32px; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4); transition: 0.3s; text-decoration: none; }
+        .btn-get-started:hover { transform: translateY(-2px); box-shadow: 0 15px 35px rgba(59, 130, 246, 0.6); }
+        .btn-secondary { background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: #fff; padding: 16px 32px; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; transition: 0.3s; text-decoration: none;}
+        .btn-secondary:hover { background: rgba(255,255,255,0.1); }
+
+        .trust-indicator { display: flex; align-items: center; gap: 15px; font-size: 14px; color: var(--text-muted); font-weight: 500; }
+        .avatars { display: flex; }
+        .avatars img { width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--bg-site); margin-left: -10px; }
+        .avatars img:first-child { margin-left: 0; }
+
+        /* Right Side Mockup */
+        .hero-visual { flex: 1; position: relative; display: flex; justify-content: center; align-items: center; }
+        .mockup-main { width: 100%; max-width: 450px; background: rgba(24, 24, 27, 0.6); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; padding: 25px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); position: relative; z-index: 2; transform: perspective(1000px) rotateY(-5deg) rotateX(5deg); transition: 0.5s ease; }
+        .mockup-main:hover { transform: perspective(1000px) rotateY(0deg) rotateX(0deg); }
+        .mock-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+        .mock-title { font-size: 14px; color: var(--text-muted); font-weight: 500; margin-bottom: 5px; }
+        .mock-balance { font-size: 32px; font-weight: 800; color: #fff; }
+        .mock-badge { background: rgba(16, 185, 129, 0.2); color: var(--accent); padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 700; }
+        .mock-chart { height: 120px; display: flex; align-items: flex-end; gap: 12px; margin-bottom: 30px; border-bottom: 1px dashed var(--border); padding-bottom: 15px; }
+        .bar { flex: 1; background: var(--primary); border-radius: 4px 4px 0 0; opacity: 0.8; transition: 0.3s; }
+        .bar.b1 { height: 40%; } .bar.b2 { height: 70%; } .bar.b3 { height: 50%; } .bar.b4 { height: 90%; background: linear-gradient(to top, var(--primary), #c084fc); } .bar.b5 { height: 60%; }
+        .mock-list-title { font-size: 14px; font-weight: 600; margin-bottom: 15px; color: #fff; }
+        .mock-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; background: rgba(255,255,255,0.03); border-radius: 12px; margin-bottom: 10px; }
+        .mock-item-left { display: flex; align-items: center; gap: 12px; }
+        .mock-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+        .mock-icon.green { background: rgba(16,185,129,0.15); color: var(--accent); }
+        .mock-icon.red { background: rgba(239,68,68,0.15); color: var(--danger); }
+        .m-title { font-size: 14px; font-weight: 600; color: #fff; }
+        .m-sub { font-size: 12px; color: var(--text-muted); }
+        .m-amt.positive { color: var(--accent); font-weight: 600; font-size: 14px;}
+        .m-amt.negative { color: var(--text-main); font-weight: 600; font-size: 14px;}
+        .widget { position: absolute; background: rgba(24, 24, 27, 0.8); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.1); padding: 15px 20px; border-radius: 16px; display: flex; align-items: center; gap: 15px; box-shadow: 0 15px 30px rgba(0,0,0,0.3); z-index: 3; animation: float 6s infinite ease-in-out alternate; }
+        .widget-1 { top: -20px; right: -40px; animation-delay: 0s; }
+        .widget-2 { bottom: 40px; left: -60px; animation-delay: -3s; }
+        .w-icon { font-size: 24px; } .w-title { font-size: 12px; color: var(--text-muted); margin-bottom: 4px; } .w-amt { font-size: 16px; font-weight: 700; color: #fff; }
+
+        @keyframes float { 0% { transform: translateY(0px); } 100% { transform: translateY(-15px); } }
+
+        /* --- FEATURES SECTION --- */
+        .features-section { padding: 100px 5%; max-width: 1300px; margin: 0 auto; position: relative; z-index: 10; }
+        .section-header { text-align: center; margin-bottom: 60px; }
+        .section-title { font-size: 36px; font-weight: 800; margin-bottom: 16px; letter-spacing: -0.5px; }
+        .section-desc { font-size: 16px; color: var(--text-muted); max-width: 600px; margin: 0 auto; line-height: 1.6; }
+        
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 30px; }
+        .feat-box { background: rgba(24, 24, 27, 0.5); backdrop-filter: blur(10px); border: 1px solid var(--border); padding: 35px 30px; border-radius: 24px; transition: 0.4s; }
+        .feat-box:hover { transform: translateY(-8px); border-color: rgba(96, 165, 250, 0.4); box-shadow: 0 20px 40px rgba(0,0,0,0.4); background: rgba(24, 24, 27, 0.8); }
+        .feat-icon-wrap { width: 55px; height: 55px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 26px; margin-bottom: 25px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); }
+        .feat-box h3 { font-size: 20px; font-weight: 700; margin-bottom: 12px; color: #fff; }
+        .feat-box p { font-size: 15px; color: var(--text-muted); line-height: 1.6; }
+
+        /* --- Modal Auth Form --- */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px); display: flex; align-items: center; justify-content: center; z-index: 1000; opacity: 0; visibility: hidden; transition: 0.3s ease; }
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+        .auth-card { background: var(--surface); border: 1px solid var(--border); width: 100%; max-width: 420px; padding: 40px; border-radius: 24px; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5); transform: translateY(20px) scale(0.95); transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); position: relative; }
+        .modal-overlay.active .auth-card { transform: translateY(0) scale(1); }
+        .close-btn { position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.05); border: none; color: var(--text-muted); width: 32px; height: 32px; border-radius: 50%; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+        .close-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
+        .auth-header { margin-bottom: 25px; text-align: center; }
+        .auth-header h2 { font-size: 26px; font-weight: 700; margin-bottom: 8px; }
+        .auth-header p { color: var(--text-muted); font-size: 14px; }
+        .btn-google { width: 100%; padding: 12px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); color: #fff; border-radius: 12px; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.2s; }
+        .btn-google:hover { background: rgba(255,255,255,0.08); }
+        .divider { display: flex; align-items: center; margin: 20px 0; }
+        .divider::before, .divider::after { content: ""; flex: 1; height: 1px; background: var(--border); }
+        .divider span { padding: 0 15px; color: #555; font-size: 12px; font-weight: 600; }
+        .input-group { margin-bottom: 16px; text-align: left; }
+        .input-group label { display: block; font-size: 13px; font-weight: 500; color: #ccc; margin-bottom: 8px; }
+        .input-wrapper { position: relative; }
+        .input-wrapper input { width: 100%; padding: 14px 16px; background: rgba(0,0,0,0.3); border: 1px solid var(--border); color: #fff; border-radius: 12px; font-size: 14px; outline: none; transition: 0.3s; }
+        .input-wrapper input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); }
+        .eye-btn { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); background: none; border: none; font-size: 14px; cursor: pointer; opacity: 0.5; }
+        .eye-btn:hover { opacity: 1; }
+        .form-options { display: flex; justify-content: flex-start; align-items: center; margin-bottom: 25px; }
+        .checkbox-group { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+        .checkbox-group input { cursor: pointer; accent-color: var(--primary); }
+        .checkbox-group label { font-size: 13px; color: var(--text-muted); cursor: pointer; }
+        .btn-primary { width: 100%; padding: 14px; background: var(--primary); border: none; color: #fff; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer; transition: 0.3s; }
+        .btn-primary:hover { background: var(--primary-hover); }
+        .auth-footer { text-align: center; margin-top: 20px; font-size: 13px; color: var(--text-muted); }
+        .auth-footer a { color: #60a5fa; text-decoration: none; font-weight: 600; margin-left: 5px; cursor: pointer; }
+        .auth-footer a:hover { text-decoration: underline; }
+        /* Alert Messages */
+        .alert-msg { font-size: 13px; margin-top: 15px; text-align: center; display: none; padding: 10px; border-radius: 8px; font-weight: 500; align-items: center; justify-content: center; gap: 8px; animation: fadeIn 0.3s ease; }
+        .alert-error { color: #ef4444; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); }
+        .alert-success { color: #10b981; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .footer { text-align: center; padding: 40px; border-top: 1px solid var(--border); color: #666; font-size: 14px; margin-top: 50px; }
+
+        @media (max-width: 992px) {
+            .hero-container { flex-direction: column; text-align: center; padding-top: 40px; }
+            .hero-text { margin: 0 auto; }
+            .hero-title { font-size: 48px; }
+            .hero-btns { justify-content: center; }
+            .trust-indicator { justify-content: center; }
+            .hero-visual { margin-top: 50px; width: 100%; }
+            .widget-1 { right: 0; top: -40px; }
+            .widget-2 { left: 0; bottom: -40px; }
+            .nav-links { display: none; }
+        }
+    </style>
 </head>
 <body>
-    <div class="auth-container">
-        <div class="auth-card">
-            <h1 class="project-title">Money Manager</h1>
-            
-            <h2 id="form-title">Welcome Back</h2>
-            <p id="form-subtitle">Login to manage your finances</p>
-            
-            <form id="auth-form">
-                <div class="input-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" required placeholder="name@example.com">
-                </div>
-                <div class="input-group">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" required placeholder="••••••••">
-                </div>
-                
-                <!-- Save Password (Remember me) -->
-                <div class="remember-me" id="remember-me-container">
-                    <input type="checkbox" id="remember">
-                    <label for="remember">Remember me</label>
-                </div>
+    
+    <div class="bg-layer"></div>
+    <div class="glow-circle glow-1"></div>
+    <div class="glow-circle glow-2"></div>
+    <div class="glow-circle glow-3"></div>
 
-                <button type="submit" id="submit-btn" class="btn-primary">Login</button>
-            </form>
-            
-            <div class="auth-switch">
-                <span id="switch-text">Don't have an account?</span>
-                <a href="#" id="switch-btn">Sign Up</a>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <span>🏦</span> <span data-i18n="app_name">Money Manager</span>
+        </div>
+        <div class="nav-links">
+            <a href="#" data-i18n="nav_home">Home</a>
+            <a href="#features" data-i18n="nav_features">Features</a>
+        </div>
+        <div class="nav-actions">
+            <div class="lang-switch">
+                <button id="btn-en" class="active">EN</button>
+                <button id="btn-mm">MM</button>
             </div>
-            <div id="error-message" class="error"></div>
+            <button class="btn-nav-login" id="nav-login-btn" data-i18n="btn_nav_login">Log In</button>
+        </div>
+    </nav>
+
+    <!-- Main Hero -->
+    <main class="hero-container">
+        <div class="hero-text">
+            <div class="hero-badge" data-i18n="hero_badge">🚀 The #1 Personal Finance App</div>
+            <h1 class="hero-title">
+                <span data-i18n="hero_main">Track Every Penny,</span><br>
+                <span class="highlight" data-i18n="hero_main_highlight">Grow Your Wealth.</span>
+            </h1>
+            <p class="hero-desc" data-i18n="hero_desc">Take absolute control of your financial future. Monitor your income, analyze expenses, and achieve your goals with our beautiful, intuitive platform.</p>
+            
+            <div class="hero-btns">
+                <button class="btn-get-started" id="hero-start-btn" data-i18n="btn_get_started">Start For Free</button>
+                <a href="#features" class="btn-secondary" data-i18n="btn_watch_demo">View Features</a>
+            </div>
+
+            <div class="trust-indicator">
+                <div class="avatars">
+                    <img src="https://i.pravatar.cc/100?img=1" alt="User">
+                    <img src="https://i.pravatar.cc/100?img=2" alt="User">
+                    <img src="https://i.pravatar.cc/100?img=3" alt="User">
+                </div>
+                <span data-i18n="trusted_by">Trusted by 10,000+ users worldwide</span>
+            </div>
+        </div>
+
+        <div class="hero-visual">
+            <div class="widget widget-1">
+                <div class="w-icon">💰</div>
+                <div><div class="w-title" data-i18n="mock_income">Total Income</div><div class="w-amt" style="color: #10b981;">+ 3,250,000 Ks</div></div>
+            </div>
+
+            <div class="mockup-main">
+                <div class="mock-header">
+                    <div><div class="mock-title" data-i18n="mock_balance">Total Balance</div><div class="mock-balance">2,800,000 Ks</div></div>
+                    <div class="mock-badge">+ 15%</div>
+                </div>
+                <div class="mock-chart">
+                    <div class="bar b1"></div><div class="bar b2"></div><div class="bar b3"></div><div class="bar b4"></div><div class="bar b5"></div>
+                </div>
+                <div class="mock-list-title" data-i18n="mock_recent">Recent Transactions</div>
+                <div class="mock-item">
+                    <div class="mock-item-left"><div class="mock-icon green">💼</div><div><div class="m-title" data-i18n="mock_salary">Freelance Salary</div><div class="m-sub">Today, 10:00 AM</div></div></div>
+                    <div class="m-amt positive">+ 850,000 Ks</div>
+                </div>
+                <div class="mock-item">
+                    <div class="mock-item-left"><div class="mock-icon red">🍔</div><div><div class="m-title" data-i18n="mock_food">Food & Dining</div><div class="m-sub">Yesterday, 7:30 PM</div></div></div>
+                    <div class="m-amt negative">- 45,000 Ks</div>
+                </div>
+            </div>
+
+            <div class="widget widget-2">
+                <div class="w-icon">💸</div>
+                <div><div class="w-title" data-i18n="mock_expense">Total Expense</div><div class="w-amt" style="color: #ef4444;">- 450,000 Ks</div></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- NEW: Features Section -->
+    <section id="features" class="features-section">
+        <div class="section-header">
+            <h2 class="section-title" data-i18n="feat_sec_title">Everything you need to manage money</h2>
+            <p class="section-desc" data-i18n="feat_sec_desc">Powerful features designed to help you save more, spend smarter, and build wealth over time.</p>
+        </div>
+        
+        <div class="features-grid">
+            <div class="feat-box">
+                <div class="feat-icon-wrap" style="color: #60a5fa;">📊</div>
+                <h3 data-i18n="f1_title">Smart Analytics</h3>
+                <p data-i18n="f1_desc">Understand your spending habits with beautiful charts and visual breakdowns of your finances.</p>
+            </div>
+            <div class="feat-box">
+                <div class="feat-icon-wrap" style="color: #a78bfa;">☁️</div>
+                <h3 data-i18n="f2_title">Cloud Sync</h3>
+                <p data-i18n="f2_desc">Your data is safely stored in the cloud. Access your account from any phone, tablet, or computer.</p>
+            </div>
+            <div class="feat-box">
+                <div class="feat-icon-wrap" style="color: #34d399;">🌐</div>
+                <h3 data-i18n="f3_title">Bilingual Support</h3>
+                <p data-i18n="f3_desc">Seamlessly switch between English and Myanmar language with just a single click.</p>
+            </div>
+            
+        </div>
+    </section>
+
+    <footer class="footer">
+        &copy; 2026 Money Manager App. All rights reserved. Built for a better financial future.
+    </footer>
+
+    <!-- AUTH MODAL -->
+    <div class="modal-overlay" id="auth-modal">
+        <div class="auth-card">
+            <button class="close-btn" id="close-modal-btn">&times;</button>
+            <div class="auth-header"><h2 id="form-title" data-i18n="login_title">Welcome Back</h2><p id="form-subtitle" data-i18n="login_sub">Log in to your account to continue.</p></div>
+            <button class="btn-google" id="google-login-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+                <span data-i18n="btn_google">Continue with Google</span>
+            </button>
+            <div class="divider"><span data-i18n="lbl_or">OR</span></div>
+            <form id="auth-form">
+                <div class="input-group"><label for="email" data-i18n="lbl_email">Email address</label><div class="input-wrapper"><input type="email" id="email" required placeholder="name@example.com"></div></div>
+                <div class="input-group"><label for="password" data-i18n="lbl_pass">Password</label><div class="input-wrapper"><input type="password" id="password" required placeholder="••••••••"><button type="button" class="eye-btn" id="toggle-password">👁️</button></div></div>
+                <div class="form-options" id="remember-me-container"><label class="checkbox-group"><input type="checkbox" id="remember"><span data-i18n="lbl_remember">Remember this device</span></label></div>
+                <button type="submit" id="submit-btn" class="btn-primary" data-i18n="btn_login">Sign In</button>
+            </form>
+            <div class="auth-footer"><span id="switch-text" data-i18n="no_account">Don't have an account?</span><a id="switch-btn" data-i18n="btn_signup">Create Account</a></div>
+            <div id="alert-message" class="alert-msg"></div>
         </div>
     </div>
     
