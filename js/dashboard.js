@@ -16,6 +16,7 @@ const sidebarOverlay = document.getElementById('sidebar-overlay');
 
 let trendChartInstance = null;
 let categoryChartInstance = null;
+let incomeCategoryChartInstance = null; // 💡 NEW Chart Variable
 let allTransactions = []; 
 
 function getLocalDateString(d = new Date()) {
@@ -139,7 +140,6 @@ menuItems.forEach(item => {
 });
 
 function setupDateFilter(callbackFunction) {
-    // 💡 UPDATE: Flex-wrap: nowrap ထည့်သွင်းပြီး အစဉ်လိုက် ပြန်လည်စီစဉ်ထားသည်
     topbarActions.innerHTML = `
         <div class="date-filter-container" style="display: flex; align-items: center; justify-content: flex-end; gap: 12px; flex-wrap: nowrap; overflow-x: auto; padding-bottom: 2px;">
             
@@ -311,6 +311,7 @@ async function initDashboardLogic() {
         list.innerHTML = '<tr><td colspan="5" class="text-center text-muted">No transactions found.</td></tr>';
         if (trendChartInstance) trendChartInstance.destroy();
         if (categoryChartInstance) categoryChartInstance.destroy();
+        if (incomeCategoryChartInstance) incomeCategoryChartInstance.destroy(); // Clear new chart
     } else {
         filtered.forEach(t => {
             const tr = document.createElement('tr');
@@ -367,11 +368,9 @@ async function initDashboardLogic() {
         if(e.target === exportModal) closeExportModal();
     });
 
-    // 📤 Export Functions (CSV, Excel, Image)
     const btnCsv = document.getElementById('btn-export-csv');
     const btnExcel = document.getElementById('btn-export-excel');
     const btnImage = document.getElementById('btn-export-image');
-    
     const reportName = `MoneyManager_Report_${getLocalDateString()}`;
 
     if(btnCsv) {
@@ -433,32 +432,40 @@ async function initDashboardLogic() {
                     link.download = `${reportName}.png`;
                     link.href = canvas.toDataURL('image/png');
                     link.click();
-                    
                     actionColumns.forEach(col => col.style.display = '');
                 });
             }, 350); 
         };
     }
 
-    // Chart.js Logic
+    // ==========================================
+    // 📊 Chart.js Logic (3 Charts)
+    // ==========================================
     const trendCtx = document.getElementById('trendChart');
-    const catCtx = document.getElementById('categoryChart');
+    const expCatCtx = document.getElementById('categoryChart');
+    const incCatCtx = document.getElementById('incomeCategoryChart');
     
-    if(trendCtx && catCtx) {
+    if(trendCtx && expCatCtx && incCatCtx) {
         if (trendChartInstance) trendChartInstance.destroy();
         if (categoryChartInstance) categoryChartInstance.destroy();
+        if (incomeCategoryChartInstance) incomeCategoryChartInstance.destroy();
 
         let incomeTotal = 0, expenseTotal = 0;
         let expenseByCategory = {};
+        let incomeByCategory = {}; // 💡 ဝင်ငွေ အမျိုးအစား ခွဲခြားရန်
 
         filtered.forEach(t => {
-            if (t.type === 'income') incomeTotal += Number(t.amount);
+            if (t.type === 'income') {
+                incomeTotal += Number(t.amount);
+                incomeByCategory[t.category] = (incomeByCategory[t.category] || 0) + Number(t.amount);
+            }
             if (t.type === 'expense') {
                 expenseTotal += Number(t.amount);
                 expenseByCategory[t.category] = (expenseByCategory[t.category] || 0) + Number(t.amount);
             }
         });
 
+        // 1. Trend Bar Chart
         trendChartInstance = new Chart(trendCtx, {
             type: 'bar',
             data: {
@@ -481,16 +488,44 @@ async function initDashboardLogic() {
             }
         });
 
-        const catLabels = Object.keys(expenseByCategory);
-        const catData = Object.values(expenseByCategory);
+        // 2. NEW: Income Category Doughnut Chart
+        const incLabels = Object.keys(incomeByCategory);
+        const incData = Object.values(incomeByCategory);
         
-        categoryChartInstance = new Chart(catCtx, {
+        incomeCategoryChartInstance = new Chart(incCatCtx, {
             type: 'doughnut',
             data: {
-                labels: catLabels.length ? catLabels : ['No Expenses'],
+                labels: incLabels.length ? incLabels : ['No Income'],
                 datasets: [{
-                    data: catData.length ? catData : [1],
-                    backgroundColor: catData.length ? [
+                    data: incData.length ? incData : [1],
+                    backgroundColor: incData.length ? [
+                        '#10b981', '#34d399', '#059669', '#3b82f6', '#60a5fa', '#8b5cf6'
+                    ] : ['#374151'],
+                    borderWidth: 0,
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom', labels: { color: '#9ca3af', font: { size: 11 }, boxWidth: 12 } }
+                },
+                cutout: '70%'
+            }
+        });
+
+        // 3. Expense Category Doughnut Chart
+        const expLabels = Object.keys(expenseByCategory);
+        const expData = Object.values(expenseByCategory);
+        
+        categoryChartInstance = new Chart(expCatCtx, {
+            type: 'doughnut',
+            data: {
+                labels: expLabels.length ? expLabels : ['No Expenses'],
+                datasets: [{
+                    data: expData.length ? expData : [1],
+                    backgroundColor: expData.length ? [
                         '#ef4444', '#f59e0b', '#3b82f6', '#10b981', '#8b5cf6', '#ec4899', '#14b8a6'
                     ] : ['#374151'],
                     borderWidth: 0,
@@ -501,7 +536,7 @@ async function initDashboardLogic() {
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: { position: 'right', labels: { color: '#9ca3af', font: { size: 11 } } }
+                    legend: { position: 'bottom', labels: { color: '#9ca3af', font: { size: 11 }, boxWidth: 12 } }
                 },
                 cutout: '70%'
             }
