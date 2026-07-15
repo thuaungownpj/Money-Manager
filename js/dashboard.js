@@ -10,7 +10,6 @@ const logoutBtn = document.getElementById('logout-btn');
 const btnEn = document.getElementById('btn-en');
 const btnMm = document.getElementById('btn-mm');
 
-// --- Mobile Sidebar Elements ---
 const mobileMenuBtn = document.getElementById('mobile-menu-btn');
 const sidebar = document.getElementById('sidebar');
 const sidebarOverlay = document.getElementById('sidebar-overlay');
@@ -19,9 +18,13 @@ let trendChartInstance = null;
 let categoryChartInstance = null;
 let allTransactions = []; 
 
-// ==========================================
-// Mobile Sidebar ဖွင့်/ပိတ် Logic
-// ==========================================
+function getLocalDateString(d = new Date()) {
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+
 if (mobileMenuBtn && sidebar && sidebarOverlay) {
     mobileMenuBtn.addEventListener('click', () => {
         sidebar.classList.add('show');
@@ -114,7 +117,7 @@ async function loadView(viewName) {
             default:
                 throw new Error("View not found");
         }
-        applyTranslations(); // View အသစ်ဝင်လာတိုင်း ဘာသာစကားချက်ချင်းပြောင်းရန်
+        applyTranslations(); 
     } catch (error) {
         appContent.innerHTML = '<p class="text-center text-danger" style="margin-top: 50px;">Error loading view.</p>';
     }
@@ -125,7 +128,6 @@ menuItems.forEach(item => {
         menuItems.forEach(i => i.classList.remove('active'));
         e.currentTarget.classList.add('active');
         
-        // ဖုန်းစခရင်တွင် Menu နှိပ်ပြီးပါက Sidebar ကို အလိုအလျောက်ပိတ်ပေးရန်
         if (window.innerWidth <= 768 && sidebar && sidebarOverlay) {
             sidebar.classList.remove('show');
             sidebarOverlay.classList.remove('show');
@@ -137,9 +139,11 @@ menuItems.forEach(item => {
 });
 
 function setupDateFilter(callbackFunction) {
+    // 💡 UPDATE: Flex-wrap: nowrap ထည့်သွင်းပြီး အစဉ်လိုက် ပြန်လည်စီစဉ်ထားသည်
     topbarActions.innerHTML = `
-        <div class="date-filter-container" style="display: flex; align-items: center; gap: 10px;">
-            <select id="date-preset" class="date-input" style="padding: 6px 10px; border-radius: 6px; cursor: pointer; background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border); outline: none;">
+        <div class="date-filter-container" style="display: flex; align-items: center; justify-content: flex-end; gap: 12px; flex-wrap: nowrap; overflow-x: auto; padding-bottom: 2px;">
+            
+            <select id="date-preset" class="date-input" style="padding: 8px 12px; border-radius: 8px; cursor: pointer; background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border); outline: none; font-size: 14px;">
                 <option value="today">Today</option>
                 <option value="7days">Last 7 Days</option>
                 <option value="1month">Last 1 Month</option>
@@ -149,11 +153,17 @@ function setupDateFilter(callbackFunction) {
             </select>
             
             <div id="custom-date-fields" style="display: none; align-items: center; gap: 8px;">
-                <input type="date" id="filter-start" class="date-input">
+                <input type="date" id="filter-start" class="date-input" style="padding: 7px; border-radius: 6px; border: 1px solid var(--border); background: var(--bg-card); color: var(--text-main);">
                 <span class="date-separator">to</span>
-                <input type="date" id="filter-end" class="date-input">
-                <button id="filter-btn" class="btn-filter">Filter</button>
+                <input type="date" id="filter-end" class="date-input" style="padding: 7px; border-radius: 6px; border: 1px solid var(--border); background: var(--bg-card); color: var(--text-main);">
+                <button id="filter-btn" class="btn-filter" style="padding: 7px 12px; border-radius: 6px; background: var(--primary); color: white; border: none; cursor: pointer;">Filter</button>
             </div>
+
+            <!-- EXPORT BUTTON -->
+            <button id="topbar-export-btn" style="background: linear-gradient(135deg, #3b82f6, #8b5cf6); border: none; color: white; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 15px rgba(59,130,246,0.3); transition: 0.3s; font-size: 14px; outline: none; white-space: nowrap;">
+                <span style="font-size: 16px;">📤</span> Export
+            </button>
+            
         </div>
     `;
     
@@ -162,13 +172,6 @@ function setupDateFilter(callbackFunction) {
     const filterStart = document.getElementById('filter-start');
     const filterEnd = document.getElementById('filter-end');
     const filterBtn = document.getElementById('filter-btn');
-
-    function formatDate(d) {
-        const year = d.getFullYear();
-        const month = String(d.getMonth() + 1).padStart(2, '0');
-        const day = String(d.getDate()).padStart(2, '0');
-        return `${year}-${month}-${day}`;
-    }
 
     function applyPreset() {
         const preset = presetSelect.value;
@@ -189,8 +192,8 @@ function setupDateFilter(callbackFunction) {
         else if (preset === '3months') { start.setMonth(today.getMonth() - 3); } 
         else if (preset === '1year') { start.setFullYear(today.getFullYear() - 1); }
 
-        filterStart.value = formatDate(start);
-        filterEnd.value = formatDate(end);
+        filterStart.value = getLocalDateString(start);
+        filterEnd.value = getLocalDateString(end);
         callbackFunction(); 
     }
 
@@ -202,6 +205,74 @@ function setupDateFilter(callbackFunction) {
 async function fetchTransactions() {
     const { data, error } = await supabase.from('transactions').select('*').order('transaction_date', { ascending: false });
     if (!error && data) allTransactions = data;
+}
+
+function setupActionButtons(type, refreshLogic) {
+    document.querySelectorAll('.btn-edit-tx').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+            const id = e.currentTarget.getAttribute('data-id');
+            const txType = e.currentTarget.getAttribute('data-type');
+            const date = e.currentTarget.getAttribute('data-date');
+            const cat = e.currentTarget.getAttribute('data-cat');
+            const amt = e.currentTarget.getAttribute('data-amount');
+
+            const modal = document.getElementById('edit-transaction-modal');
+            document.getElementById('edit-tx-id').value = id;
+            document.getElementById('edit-tx-type').value = txType;
+            document.getElementById('edit-tx-date').value = date;
+            document.getElementById('edit-tx-amount').value = amt;
+
+            const catSelect = document.getElementById('edit-tx-category');
+            const { data: cats } = await supabase.from('categories').select('*').eq('type', txType);
+            catSelect.innerHTML = cats && cats.length > 0
+                ? cats.map(c => `<option value="${c.icon} ${c.name}">${c.icon} ${c.name}</option>`).join('')
+                : '<option value="Other">Other</option>';
+            catSelect.value = cat;
+
+            modal.style.display = 'flex';
+        });
+    });
+
+    document.querySelectorAll('.btn-del-tx').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+            if(confirm('Are you sure you want to delete this record?')) {
+                const id = e.currentTarget.getAttribute('data-id');
+                await supabase.from('transactions').delete().eq('id', id);
+                refreshLogic();
+            }
+        });
+    });
+}
+
+function setupEditModalForm(refreshLogic) {
+    const editForm = document.getElementById('edit-transaction-form');
+    const closeBtn = document.getElementById('close-edit-modal');
+    const modal = document.getElementById('edit-transaction-modal');
+
+    if(closeBtn) closeBtn.addEventListener('click', () => modal.style.display = 'none');
+
+    if(editForm) {
+        const newForm = editForm.cloneNode(true);
+        editForm.parentNode.replaceChild(newForm, editForm);
+        newForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const submitBtn = newForm.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+
+            const id = document.getElementById('edit-tx-id').value;
+            const record = {
+                transaction_date: document.getElementById('edit-tx-date').value,
+                category: document.getElementById('edit-tx-category').value,
+                amount: document.getElementById('edit-tx-amount').value
+            };
+
+            await supabase.from('transactions').update(record).eq('id', id);
+            
+            submitBtn.disabled = false;
+            modal.style.display = 'none';
+            refreshLogic();
+        });
+    }
 }
 
 // ==========================================
@@ -238,35 +309,138 @@ async function initDashboardLogic() {
     
     if (filtered.length === 0) {
         list.innerHTML = '<tr><td colspan="5" class="text-center text-muted">No transactions found.</td></tr>';
-        return;
+        if (trendChartInstance) trendChartInstance.destroy();
+        if (categoryChartInstance) categoryChartInstance.destroy();
+    } else {
+        filtered.forEach(t => {
+            const tr = document.createElement('tr');
+            let badge = t.type === 'income' ? 'badge-income' : (t.type === 'expense' ? 'badge-expense' : 'badge-saving');
+            tr.innerHTML = `
+                <td>${t.transaction_date}</td>
+                <td>${t.category}</td>
+                <td><span class="type-badge ${badge}">${t.type}</span></td>
+                <td>${new Intl.NumberFormat('en-US').format(t.amount)} Ks</td>
+                <td class="action-column" style="text-align: center;">
+                    <button class="btn-edit-tx" data-id="${t.id}" data-type="${t.type}" data-date="${t.transaction_date}" data-cat="${t.category}" data-amount="${t.amount}" style="background: rgba(59,130,246,0.1); color: #3b82f6; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 13px; margin-right: 5px;">Edit</button>
+                    <button class="btn-del-tx" data-id="${t.id}" style="background: rgba(239,68,68,0.1); color: var(--danger); border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 13px;">Del</button>
+                </td>
+            `;
+            list.appendChild(tr);
+        });
+        setupActionButtons('dashboard', initDashboardLogic);
     }
     
-    filtered.forEach(t => {
-        const tr = document.createElement('tr');
-        let badge = t.type === 'income' ? 'badge-income' : (t.type === 'expense' ? 'badge-expense' : 'badge-saving');
-        tr.innerHTML = `
-            <td>${t.transaction_date}</td>
-            <td>${t.category}</td>
-            <td><span class="type-badge ${badge}">${t.type}</span></td>
-            <td>${new Intl.NumberFormat('en-US').format(t.amount)} Ks</td>
-            <td><button class="btn-delete" data-id="${t.id}">Delete</button></td>
-        `;
-        list.appendChild(tr);
-    });
+    setupEditModalForm(initDashboardLogic);
 
-    document.querySelectorAll('.btn-delete').forEach(btn => {
-        btn.addEventListener('click', async (e) => {
-            if(confirm('Are you sure you want to delete?')) {
-                const id = e.target.getAttribute('data-id');
-                await supabase.from('transactions').delete().eq('id', id);
-                initDashboardLogic(); 
+    // ==========================================
+    // 📤 Export Modal Logic 
+    // ==========================================
+    const topbarExportBtn = document.getElementById('topbar-export-btn');
+    const exportModal = document.getElementById('export-selection-modal');
+    const closeExportModalBtn = document.getElementById('close-export-modal');
+
+    if(topbarExportBtn) {
+        topbarExportBtn.addEventListener('mouseenter', () => topbarExportBtn.style.transform = 'translateY(-2px)');
+        topbarExportBtn.addEventListener('mouseleave', () => topbarExportBtn.style.transform = 'translateY(0)');
+        
+        topbarExportBtn.addEventListener('click', () => {
+            if(exportModal) {
+                exportModal.style.display = 'flex';
+                setTimeout(() => {
+                    exportModal.style.opacity = '1';
+                    exportModal.querySelector('.widget-card').style.transform = 'translateY(0)';
+                }, 10);
             }
         });
+    }
+
+    function closeExportModal() {
+        if(exportModal) {
+            exportModal.style.opacity = '0';
+            exportModal.querySelector('.widget-card').style.transform = 'translateY(20px)';
+            setTimeout(() => exportModal.style.display = 'none', 300);
+        }
+    }
+
+    if(closeExportModalBtn) closeExportModalBtn.addEventListener('click', closeExportModal);
+    if(exportModal) exportModal.addEventListener('click', (e) => {
+        if(e.target === exportModal) closeExportModal();
     });
 
-    // ==========================================
-    // 📊 Chart.js Logic 
-    // ==========================================
+    // 📤 Export Functions (CSV, Excel, Image)
+    const btnCsv = document.getElementById('btn-export-csv');
+    const btnExcel = document.getElementById('btn-export-excel');
+    const btnImage = document.getElementById('btn-export-image');
+    
+    const reportName = `MoneyManager_Report_${getLocalDateString()}`;
+
+    if(btnCsv) {
+        btnCsv.onclick = () => {
+            let csv = "Date,Category,Type,Amount (Ks)\n";
+            filtered.forEach(t => csv += `${t.transaction_date},${t.category},${t.type},${t.amount}\n`);
+            csv += `\nTotal Income,,,${tInc}\n`;
+            csv += `Total Expense,,,${tExp}\n`;
+            csv += `Net Balance,,,${diff}\n`;
+            
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${reportName}.csv`;
+            a.click();
+            closeExportModal();
+        };
+    }
+
+    if(btnExcel) {
+        btnExcel.onclick = () => {
+            if(typeof XLSX === 'undefined') return alert("Excel Library not loaded yet.");
+            const wsData = [
+                ["Money Manager - Financial Report"],
+                ["Export Date:", getLocalDateString(), "Date Range:", `${filterStart || 'All'} to ${filterEnd || 'All'}`],
+                [],
+                ["Summary"],
+                ["Total Income", tInc + " Ks"],
+                ["Total Expense", tExp + " Ks"],
+                ["Net Balance", diff + " Ks"],
+                [],
+                ["Transaction Details"],
+                ["Date", "Category", "Type", "Amount (Ks)"]
+            ];
+            filtered.forEach(t => wsData.push([t.transaction_date, t.category, t.type, Number(t.amount)]));
+            
+            const ws = XLSX.utils.aoa_to_sheet(wsData);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Report");
+            XLSX.writeFile(wb, `${reportName}.xlsx`);
+            closeExportModal();
+        };
+    }
+
+    if(btnImage) {
+        btnImage.onclick = () => {
+            if(typeof html2canvas === 'undefined') return alert("Image Library not loaded yet.");
+            closeExportModal();
+            
+            setTimeout(() => {
+                const captureArea = document.getElementById('export-capture-area');
+                const actionColumns = document.querySelectorAll('.action-column');
+                
+                actionColumns.forEach(col => col.style.display = 'none');
+                
+                html2canvas(captureArea, { scale: 2, backgroundColor: '#18181b' }).then(canvas => {
+                    const link = document.createElement('a');
+                    link.download = `${reportName}.png`;
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                    
+                    actionColumns.forEach(col => col.style.display = '');
+                });
+            }, 350); 
+        };
+    }
+
+    // Chart.js Logic
     const trendCtx = document.getElementById('trendChart');
     const catCtx = document.getElementById('categoryChart');
     
@@ -343,7 +517,7 @@ async function initTotalIncomeLogic() {
     const dateInput = document.getElementById('inc-date');
     const addForm = document.getElementById('add-income-form');
     
-    dateInput.value = new Date().toISOString().split('T')[0];
+    dateInput.value = getLocalDateString();
     
     const { data: incomeCats } = await supabase.from('categories').select('*').eq('type', 'income');
     categorySelect.innerHTML = incomeCats && incomeCats.length > 0 
@@ -387,7 +561,7 @@ async function initTotalIncomeLogic() {
     list.innerHTML = '';
     
     if(incomes.length === 0) {
-        list.innerHTML = '<tr><td colspan="3" class="text-center text-muted">No income found.</td></tr>';
+        list.innerHTML = '<tr><td colspan="4" class="text-center text-muted">No income found.</td></tr>';
         return;
     }
 
@@ -397,9 +571,16 @@ async function initTotalIncomeLogic() {
             <td>${t.transaction_date}</td>
             <td><span class="type-badge badge-income">${t.category}</span></td>
             <td style="color: #10b981; font-weight: 500;">+ ${new Intl.NumberFormat('en-US').format(t.amount)} Ks</td>
+            <td style="text-align: center;">
+                <button class="btn-edit-tx" data-id="${t.id}" data-type="${t.type}" data-date="${t.transaction_date}" data-cat="${t.category}" data-amount="${t.amount}" style="background: rgba(59,130,246,0.1); color: #3b82f6; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 13px; margin-right: 5px;">Edit</button>
+                <button class="btn-del-tx" data-id="${t.id}" style="background: rgba(239,68,68,0.1); color: var(--danger); border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 13px;">Del</button>
+            </td>
         `;
         list.appendChild(tr);
     });
+
+    setupActionButtons('income', initTotalIncomeLogic);
+    setupEditModalForm(initTotalIncomeLogic);
 }
 
 // ==========================================
@@ -410,7 +591,7 @@ async function initTotalExpenseLogic() {
     const dateInput = document.getElementById('exp-date');
     const addForm = document.getElementById('add-expense-form');
     
-    dateInput.value = new Date().toISOString().split('T')[0];
+    dateInput.value = getLocalDateString();
     
     const { data: expenseCats } = await supabase.from('categories').select('*').eq('type', 'expense');
     categorySelect.innerHTML = expenseCats && expenseCats.length > 0 
@@ -453,7 +634,7 @@ async function initTotalExpenseLogic() {
     const list = document.getElementById('expense-report-list');
     list.innerHTML = '';
     if(expenses.length === 0) {
-        list.innerHTML = '<tr><td colspan="3" class="text-center text-muted">No expenses found.</td></tr>';
+        list.innerHTML = '<tr><td colspan="4" class="text-center text-muted">No expenses found.</td></tr>';
         return;
     }
     expenses.forEach(t => {
@@ -462,9 +643,16 @@ async function initTotalExpenseLogic() {
             <td>${t.transaction_date}</td>
             <td><span class="type-badge badge-expense">${t.category}</span></td>
             <td style="color: var(--danger); font-weight: 500;">- ${new Intl.NumberFormat('en-US').format(t.amount)} Ks</td>
+            <td style="text-align: center;">
+                <button class="btn-edit-tx" data-id="${t.id}" data-type="${t.type}" data-date="${t.transaction_date}" data-cat="${t.category}" data-amount="${t.amount}" style="background: rgba(59,130,246,0.1); color: #3b82f6; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 13px; margin-right: 5px;">Edit</button>
+                <button class="btn-del-tx" data-id="${t.id}" style="background: rgba(239,68,68,0.1); color: var(--danger); border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 13px;">Del</button>
+            </td>
         `;
         list.appendChild(tr);
     });
+
+    setupActionButtons('expense', initTotalExpenseLogic);
+    setupEditModalForm(initTotalExpenseLogic);
 }
 
 // ==========================================
@@ -524,7 +712,6 @@ async function renderExpenseCategoriesList() {
     list.innerHTML = cats && cats.length ? cats.map(c => `<div class="category-item"><div class="cat-info"><div class="cat-icon-display" style="color:var(--danger); background:rgba(239,68,68,0.1)">${c.icon}</div><div class="cat-name-display">${c.name}</div></div><button class="btn-delete-cat" onclick="deleteCategory(${c.id}, 'expense')">🗑️</button></div>`).join('') : '<p class="text-muted">No data.</p>';
 }
 
-// Global Category Delete
 window.deleteCategory = async function(id, type) {
     if(confirm('Are you sure you want to delete this category?')){ 
         await supabase.from('categories').delete().eq('id', id);
@@ -533,9 +720,6 @@ window.deleteCategory = async function(id, type) {
     }
 }
 
-// ==========================================
-// Logout
-// ==========================================
 logoutBtn.addEventListener('click', async () => {
     await supabase.auth.signOut();
     window.location.href = 'index.html';

@@ -49,11 +49,40 @@
                     <th>Date</th>
                     <th>Category</th>
                     <th>Amount</th>
+                    <th style="width: 140px; text-align: center;">Action</th>
                 </tr>
             </thead>
             <tbody id="income-report-list">
-                <tr><td colspan="3" class="text-center text-muted">Loading...</td></tr>
+                <tr><td colspan="4" class="text-center text-muted">Loading...</td></tr>
             </tbody>
         </table>
     </div>
 </section>
+
+<!-- Edit Transaction Modal (Hidden by default) -->
+<div id="edit-transaction-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 1000; justify-content: center; align-items: center;">
+    <div class="widget-card" style="width: 100%; max-width: 400px; padding: 25px;">
+        <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h3 style="margin: 0;">✏️ Edit Income</h3>
+            <button id="close-edit-modal" style="background: none; border: none; font-size: 24px; color: var(--text-muted); cursor: pointer;">&times;</button>
+        </div>
+        <form id="edit-transaction-form">
+            <input type="hidden" id="edit-tx-id">
+            <input type="hidden" id="edit-tx-type">
+            <div class="input-group" style="margin-bottom: 15px;">
+                <label>Date (ရက်စွဲ)</label>
+                <input type="date" id="edit-tx-date" required style="width: 100%;">
+            </div>
+            <div class="input-group" style="margin-bottom: 15px;">
+                <label>Category (အမျိုးအစား)</label>
+                <select id="edit-tx-category" required style="width: 100%;">
+                </select>
+            </div>
+            <div class="input-group" style="margin-bottom: 20px;">
+                <label>Amount (ပမာဏ - Ks)</label>
+                <input type="number" id="edit-tx-amount" required style="width: 100%;" min="0">
+            </div>
+            <button type="submit" class="btn-primary" style="width: 100%; padding: 12px;">Update Record</button>
+        </form>
+    </div>
+</div>
